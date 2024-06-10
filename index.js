@@ -1,28 +1,23 @@
-const bodyParser=require("body-parser")
-const express=require("express")
-const app=express();
-const path=require("path")
-const cors=require("cors");
-const {connect}=require("./db")
-const router=require("./Routes/index")
-const port =5000
+// index.js
 
-app.use(cors())
-app.use(bodyParser.json({limit:"50mb"}))
-app.use(bodyParser.urlencoded({extended:true,limit:"50mb"}))
-app.use(express.json())
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const dotenv = require('dotenv');
+const { connect } = require('./db');
+const subscriptionRoutes = require('./Routes/subscriptionRoutes');
 
-app.get("/",(req,res)=>{
-    res.send("Hello This is My backend")
-})
-app.use("/api",router)
+const app = express();
+dotenv.config();
 connect();
- app.use((req,res,next)=>{
-    req.header("Access-Control-Allow-Origin","*")
-    res.header("Access-Control-Allow-Origin","*")
-    next()
- })
 
-app.listen(port,()=>{
-    console.log("server is running on port ")
-})
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use('/api/subscription', subscriptionRoutes);
+
+const port = process.env.PORT || 5000;
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+});
